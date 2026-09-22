@@ -17,6 +17,6 @@
 
 # Kurt Cobain Vazquez Sanchez
 # Victor Fernando Olivares Heredia 
-#
+# Jesús Alejandro Aguilar Hernández
 #
 #
