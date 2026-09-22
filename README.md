@@ -15,3 +15,8 @@
 <img src="https://img.shields.io/badge/Sprint-3-009D81?style=for-the-badge" alt="Sprint 3" />
 <img src="https://img.shields.io/badge/Estado-En%20desarrollo-2ea44f?style=for-the-badge" alt="Estado" />
 
+# Kurt Cobain Vazquez Sanchez
+#
+#
+#
+#
