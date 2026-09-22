@@ -16,7 +16,7 @@
 <img src="https://img.shields.io/badge/Estado-En%20desarrollo-2ea44f?style=for-the-badge" alt="Estado" />
 
 # Kurt Cobain Vazquez Sanchez
-#
+# Victor Fernando Olivares Heredia 
 #
 #
 #
