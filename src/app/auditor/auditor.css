@@ -1,0 +1,31 @@
+.auditor-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f8fc;
+}
+
+.auditor-card {
+  width: 500px;
+  padding: 40px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  text-align: center;
+}
+
+.auditor-card h1 {
+  color: #156ef2;
+  margin-bottom: 20px;
+}
+
+.auditor-card p {
+  color: #333;
+  font-size: 16px;
+}
+
+.auditor-card strong {
+  color: #156ef2;
+  font-size: 20px;
+}
