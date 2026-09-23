@@ -1,0 +1,29 @@
+name: Validar React
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Instalar dependencias
+        run: npm install --no-package-lock --no-audit --no-fund
+
+      - name: Compilar
+        run: npm run build
+
+      - name: Ejecutar ESLint
+        run: npm run lint
