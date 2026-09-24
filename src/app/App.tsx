@@ -1,30 +1,54 @@
-import { useMemo } from 'react';
-import { useProducts } from '../features/products/application/useProducts';
-import { ProductList } from '../features/products/ui/ProductList';
-import { createProductService } from './createProductService';
+import { useEffect, useState } from 'react';
+import type { Product } from '../core/models/Product';
+import { AddToCartActions } from '../components/AddToCartActions';
+import { CartView } from '../components/CartView';
+import '../index.css';
 
 export default function App() {
-  const productService = useMemo(() => createProductService(), []);
-  const { products, loading, error } = useProducts(productService);
+  const [products, setProducts] = useState<Product[]>([]);
+
+  // Simulamos el consumo de la FakeStoreAPI para traer las imágenes y datos reales
+  useEffect(() => {
+    fetch('https://fakestoreapi.com/products?limit=25')
+      .then((res) => res.json())
+      .then((data) => setProducts(data));
+  }, []);
 
   return (
-    <main className="app-shell">
+    <div className="app-container">
       <header className="app-header">
-        <p className="eyebrow">Sprint 3 · React + TypeScript</p>
-        <h1>Base de la aplicación</h1>
-        <p>
-          Arquitectura inicial separada por responsabilidades y preparada para
-          crecer por funcionalidades.
-        </p>
+        <h1>NovaStore</h1>
+        <p>Tu tienda en línea con la mejor tecnología y estilo.</p>
       </header>
+      
 
-      <section className="catalog-card" aria-labelledby="catalog-title">
-        <h2 id="catalog-title">Catálogo base</h2>
+      <main className="main-content">
+        {/* Lado izquierdo: Catálogo con imágenes y botones (US09) */}
+        <section className="catalog-section">
+          <h2>Catálogo Base</h2>
+          <div className="product-grid">
+            {products.map((product) => (
+              <div key={product.id} className="product-card">
+                <div className="image-container">
+                  <img src={product.image} alt={product.title} />
+                </div>
+                <div className="product-info">
+                  <h3 title={product.title}>{product.title}</h3>
+                  <p className="price">${product.price.toFixed(2)}</p>
+                  
+                  {/* Aquí inyectamos tu Historia de Usuario 9 */}
+                  <AddToCartActions product={product} userRole="Cliente" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-        {loading && <p>Cargando productos...</p>}
-        {error && <p className="error-message">Error: {error}</p>}
-        {!loading && !error && <ProductList products={products} />}
-      </section>
-    </main>
+        {/* Lado derecho: Gestión del carrito (US10) */}
+        <aside className="cart-section">
+          <CartView />
+        </aside>
+      </main>
+    </div>
   );
 }
