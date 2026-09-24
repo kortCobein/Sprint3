@@ -7,9 +7,15 @@ interface ProductListProps {
   products: Product[];
   disabled?: boolean;
   onUpdate?: (id: number, input: ProductInput) => Promise<boolean>;
+  onDelete?: (id: number) => Promise<boolean>;
 }
 
-export function ProductList({ products, disabled = false, onUpdate }: ProductListProps) {
+export function ProductList({
+  products,
+  disabled = false,
+  onUpdate,
+  onDelete,
+}: ProductListProps) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [draft, setDraft] = useState<ProductInput | null>(null);
 
@@ -42,6 +48,13 @@ export function ProductList({ products, disabled = false, onUpdate }: ProductLis
     }
   }
 
+  async function handleDelete(product: Product) {
+    if (!onDelete) return;
+    if (window.confirm(`¿Eliminar "${product.title}" del inventario?`)) {
+      await onDelete(product.id);
+    }
+  }
+
   return (
     <ul className="product-list">
       {products.map((product) => (
@@ -67,9 +80,10 @@ export function ProductList({ products, disabled = false, onUpdate }: ProductLis
             <>
               <div className="product-info"><strong>{product.title}</strong><small>{product.category}</small></div>
               <span>${product.price.toFixed(2)}</span>
-              {onUpdate && (
+              {(onUpdate || onDelete) && (
                 <div className="product-actions">
-                  <button disabled={disabled} type="button" onClick={() => startEditing(product)}>Editar</button>
+                  {onUpdate && <button disabled={disabled} type="button" onClick={() => startEditing(product)}>Editar</button>}
+                  {onDelete && <button className="danger-button" disabled={disabled} type="button" onClick={() => void handleDelete(product)}>Eliminar</button>}
                 </div>
               )}
             </>

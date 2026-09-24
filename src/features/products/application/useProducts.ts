@@ -9,11 +9,7 @@ interface ProductsState {
   error: string | null;
 }
 
-const initialState: ProductsState = {
-  products: [],
-  loading: true,
-  error: null,
-};
+const initialState: ProductsState = { products: [], loading: true, error: null };
 
 export function useProducts(productService: IProductService) {
   const [state, setState] = useState<ProductsState>(initialState);
@@ -44,10 +40,7 @@ export function useProducts(productService: IProductService) {
     setSaving(true); setMutationError(null);
     try {
       const created = await productService.create(input);
-      setState((current) => ({
-        ...current,
-        products: [{ ...input, ...created }, ...current.products],
-      }));
+      setState((current) => ({ ...current, products: [{ ...input, ...created }, ...current.products] }));
       return true;
     } catch (error) {
       setMutationError(error instanceof Error ? error.message : 'No se pudo crear el producto');
@@ -72,5 +65,20 @@ export function useProducts(productService: IProductService) {
     } finally { setSaving(false); }
   }
 
-  return { ...state, saving, mutationError, createProduct, updateProduct };
+  async function deleteProduct(id: number) {
+    setSaving(true); setMutationError(null);
+    try {
+      await productService.remove(id);
+      setState((current) => ({
+        ...current,
+        products: current.products.filter((product) => product.id !== id),
+      }));
+      return true;
+    } catch (error) {
+      setMutationError(error instanceof Error ? error.message : 'No se pudo eliminar el producto');
+      return false;
+    } finally { setSaving(false); }
+  }
+
+  return { ...state, saving, mutationError, createProduct, updateProduct, deleteProduct };
 }

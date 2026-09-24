@@ -13,7 +13,7 @@ interface AuthenticatedAppProps { session: SessionData; onLogout(): void; }
 
 function AuthenticatedApp({ session, onLogout }: AuthenticatedAppProps) {
   const productService = useMemo(() => createProductService(), []);
-  const { products, loading, error, saving, mutationError, createProduct, updateProduct } = useProducts(productService);
+  const { products, loading, error, saving, mutationError, createProduct, updateProduct, deleteProduct } = useProducts(productService);
   const canManageInventory = session.user.role === 'Administrador';
 
   return (
@@ -36,7 +36,12 @@ function AuthenticatedApp({ session, onLogout }: AuthenticatedAppProps) {
         {loading && <p>Cargando productos...</p>}
         {error && <p className="error-message">Error: {error}</p>}
         {!loading && !error && (
-          <ProductList products={products} disabled={saving} onUpdate={canManageInventory ? updateProduct : undefined} />
+          <ProductList
+            products={products}
+            disabled={saving}
+            onUpdate={canManageInventory ? updateProduct : undefined}
+            onDelete={canManageInventory ? deleteProduct : undefined}
+          />
         )}
       </section>
     </main>
