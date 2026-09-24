@@ -2,6 +2,7 @@ import type { AuthenticatedUser } from '../domain/Auth';
 
 interface RolePanelProps {
   user: AuthenticatedUser;
+  onLogout(): void;
 }
 
 const roleDescriptions = {
@@ -10,7 +11,7 @@ const roleDescriptions = {
   Cliente: 'Acceso de cliente habilitado.',
 } as const;
 
-export function RolePanel({ user }: RolePanelProps) {
+export function RolePanel({ user, onLogout }: RolePanelProps) {
   return (
     <section className="session-card" aria-labelledby="session-title">
       <div>
@@ -20,6 +21,10 @@ export function RolePanel({ user }: RolePanelProps) {
           Usuario: <strong>{user.username}</strong> · {roleDescriptions[user.role]}
         </p>
       </div>
+
+      <button className="secondary-button" type="button" onClick={onLogout}>
+        Cerrar sesión
+      </button>
     </section>
   );
 }

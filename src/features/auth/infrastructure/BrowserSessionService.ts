@@ -22,9 +22,20 @@ export class BrowserSessionService implements ISessionService {
         user: JSON.parse(userJson) as SessionData['user'],
       };
     } catch {
-      localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(USER_KEY);
+      this.clear();
       return null;
     }
+  }
+
+  clear(): void {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+
+    // Limpieza de claves antiguas y del carrito para evitar datos entre sesiones.
+    localStorage.removeItem('token');
+    localStorage.removeItem('idUsuario');
+    localStorage.removeItem('rol');
+    localStorage.removeItem('cart_data');
+    localStorage.removeItem('carrito');
   }
 }

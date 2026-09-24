@@ -10,9 +10,10 @@ import { createProductService } from './createProductService';
 
 interface AuthenticatedAppProps {
   session: SessionData;
+  onLogout(): void;
 }
 
-function AuthenticatedApp({ session }: AuthenticatedAppProps) {
+function AuthenticatedApp({ session, onLogout }: AuthenticatedAppProps) {
   const productService = useMemo(() => createProductService(), []);
   const { products, loading, error } = useProducts(productService);
 
@@ -21,10 +22,12 @@ function AuthenticatedApp({ session }: AuthenticatedAppProps) {
       <header className="app-header">
         <p className="eyebrow">Sprint 3 · React + TypeScript</p>
         <h1>Base de la aplicación</h1>
-        <p>Sesión protegida en React con autenticación y rol.</p>
+        <p>
+          Sesión protegida en React con autenticación, rol y cierre de sesión.
+        </p>
       </header>
 
-      <RolePanel user={session.user} />
+      <RolePanel user={session.user} onLogout={onLogout} />
 
       <section className="catalog-card" aria-labelledby="catalog-title">
         <h2 id="catalog-title">Catálogo base</h2>
@@ -39,7 +42,7 @@ function AuthenticatedApp({ session }: AuthenticatedAppProps) {
 
 export default function App() {
   const authServices = useMemo(() => createAuthServices(), []);
-  const { session, loading, error, login } = useAuth(
+  const { session, loading, error, login, logout } = useAuth(
     authServices.authService,
     authServices.sessionService,
   );
@@ -48,5 +51,5 @@ export default function App() {
     return <LoginForm loading={loading} error={error} onLogin={login} />;
   }
 
-  return <AuthenticatedApp session={session} />;
+  return <AuthenticatedApp session={session} onLogout={logout} />;
 }
