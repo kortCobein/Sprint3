@@ -13,10 +13,7 @@ export function useCarts(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadCarts = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
+  const fetchCarts = useCallback(async () => {
     try {
       const [cartsData, productsData] = await Promise.all([
         cartService.getAllCarts(),
@@ -25,6 +22,7 @@ export function useCarts(
 
       setCarts(cartsData);
       setProducts(productsData);
+      setError(null);
     } catch {
       setError('No se pudieron cargar los carritos.');
     } finally {
@@ -32,15 +30,21 @@ export function useCarts(
     }
   }, [cartService, productService]);
 
+  const retry = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    void fetchCarts();
+  }, [fetchCarts]);
+
   useEffect(() => {
-    void loadCarts();
-  }, [loadCarts]);
+    void fetchCarts();
+  }, [fetchCarts]);
 
   return {
     carts,
     products,
     loading,
     error,
-    retry: loadCarts,
+    retry,
   };
 }
