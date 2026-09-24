@@ -1,9 +1,19 @@
 import { useMemo } from 'react';
+import type { SessionData } from '../features/auth/domain/Auth';
+import { useAuth } from '../features/auth/application/useAuth';
+import { LoginForm } from '../features/auth/ui/LoginForm';
+import { RolePanel } from '../features/auth/ui/RolePanel';
 import { useProducts } from '../features/products/application/useProducts';
 import { ProductList } from '../features/products/ui/ProductList';
+import { createAuthServices } from './createAuthServices';
 import { createProductService } from './createProductService';
 
-export default function App() {
+interface AuthenticatedAppProps {
+  session: SessionData;
+  onLogout(): void;
+}
+
+function AuthenticatedApp({ session, onLogout }: AuthenticatedAppProps) {
   const productService = useMemo(() => createProductService(), []);
   const { products, loading, error } = useProducts(productService);
 
@@ -13,10 +23,11 @@ export default function App() {
         <p className="eyebrow">Sprint 3 · React + TypeScript</p>
         <h1>Base de la aplicación</h1>
         <p>
-          Arquitectura inicial separada por responsabilidades y preparada para
-          crecer por funcionalidades.
+          Sesión protegida en React con autenticación, rol y cierre de sesión.
         </p>
       </header>
+
+      <RolePanel user={session.user} onLogout={onLogout} />
 
       <section className="catalog-card" aria-labelledby="catalog-title">
         <h2 id="catalog-title">Catálogo base</h2>
@@ -27,4 +38,18 @@ export default function App() {
       </section>
     </main>
   );
+}
+
+export default function App() {
+  const authServices = useMemo(() => createAuthServices(), []);
+  const { session, loading, error, login, logout } = useAuth(
+    authServices.authService,
+    authServices.sessionService,
+  );
+
+  if (!session) {
+    return <LoginForm loading={loading} error={error} onLogin={login} />;
+  }
+
+  return <AuthenticatedApp session={session} onLogout={logout} />;
 }
