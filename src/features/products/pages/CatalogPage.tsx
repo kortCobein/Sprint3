@@ -11,22 +11,46 @@ export const CatalogPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
-  const fetchCatalog = async () => {
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchCatalog = async () => {
+      try {
+        const data = await productService.getProducts();
+        if (isMounted) {
+          setProducts(data);
+          setError(false);
+        }
+      } catch {
+        if (isMounted) {
+          setError(true);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchCatalog();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleRetry = async () => {
     setLoading(true);
     setError(false);
     try {
-      const data = await productService.getProducts(); // GET /products
+      const data = await productService.getProducts();
       setProducts(data);
-    } catch (err) {
+    } catch {
       setError(true);
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchCatalog();
-  }, []);
 
   // Escenario 2: Estado de carga (Loading)
   if (loading) {
@@ -38,19 +62,19 @@ export const CatalogPage: React.FC = () => {
     );
   }
 
-  // Escenario 3: Manejo de error de conexión[cite: 2]
+  // Escenario 3: Manejo de error de conexión
   if (error) {
     return (
       <div style={styles.centerContainer}>
         <p>Hubo un problema al cargar el catálogo de productos.</p>
-        <button onClick={fetchCatalog} style={styles.retryButton}>
+        <button onClick={handleRetry} style={styles.retryButton}>
           Reintentar
         </button>
       </div>
     );
   }
 
-  // Escenario 1: Renderizado del catálogo[cite: 2]
+  // Escenario 1: Renderizado del catálogo
   return (
     <div style={styles.container}>
       <h2>Catálogo de Productos</h2>
