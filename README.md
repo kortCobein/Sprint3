@@ -39,22 +39,41 @@ npm run build
 npm run lint
 ```
 
-## Arquitectura base
+## Organización por épicas e historias
 
-La aplicación separa dominio, infraestructura, lógica de aplicación y presentación. El componente principal no conoce detalles de `fetch` ni de FakeStoreAPI; las dependencias se conectan en un punto de composición (`createProductService`). Esto permite sustituir la API o el cliente HTTP sin modificar la UI.
+La organización de trabajo sigue el mismo esquema utilizado en Sprint 2: una carpeta por integrante/épica y, dentro de ella, una carpeta por historia de usuario.
 
 ```text
-src/
-├─ app/
-├─ core/
-│  └─ http/
-└─ features/
-   └─ products/
-      ├─ application/
-      ├─ domain/
-      ├─ infrastructure/
-      └─ ui/
+src/features/
+├─ e1_victor/
+│  ├─ epica01.md
+│  ├─ hist01_login_perfiles/
+│  └─ hist02_logout_credenciales/
+├─ e2_jesus/
+│  ├─ epica02.md
+│  ├─ hist03_catalogo_general/
+│  ├─ hist04_filtrar_categoria/
+│  └─ hist05_detalle_producto/
+├─ e3_kort/
+│  ├─ epica03.md
+│  ├─ hist06_agregar_producto/
+│  ├─ hist07_editar_producto/
+│  └─ hist08_eliminar_producto/
+├─ e4_santiago/
+│  ├─ epica04.md
+│  ├─ hist09_agregar_carrito/
+│  └─ hist10_gestionar_carrito/
+└─ e5_pablo/
+   ├─ epica05.md
+   ├─ hist11_listar_usuarios/
+   └─ hist12_historico_carritos/
 ```
+
+Cada historia contiene un `index.ts` que expone únicamente los módulos relacionados con esa historia. La implementación existente se conserva para mantener estables los imports y no romper la aplicación durante la reorganización.
+
+## Arquitectura base
+
+La aplicación separa dominio, infraestructura, lógica de aplicación y presentación. El componente principal no conoce detalles de `fetch` ni de FakeStoreAPI; las dependencias se conectan en puntos de composición.
 
 ## Ramas de trabajo
 
