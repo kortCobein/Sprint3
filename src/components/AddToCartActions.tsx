@@ -7,16 +7,19 @@ interface AddToCartActionsProps {
   userRole: string;
 }
 
-export const AddToCartActions = ({ product, userRole }: AddToCartActionsProps) => {
+export const AddToCartActions = ({
+  product,
+  userRole,
+}: AddToCartActionsProps) => {
   const { addProductToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
 
-  if (userRole === 'Auditor') return null;
+  if (userRole !== 'Cliente') return null;
 
   const handleAdd = async () => {
     if (quantity > 0) {
       const result = await addProductToCart(product, quantity);
-      alert(result.message); 
+      alert(result.message);
     }
   };
 
@@ -26,10 +29,12 @@ export const AddToCartActions = ({ product, userRole }: AddToCartActionsProps) =
         type="number"
         min="1"
         value={quantity}
-        onChange={(e) => setQuantity(Number(e.target.value))}
+        onChange={(event) => setQuantity(Number(event.target.value))}
         style={{ width: '60px' }}
       />
-      <button onClick={handleAdd}>Agregar al carrito</button>
+      <button type="button" onClick={() => void handleAdd()}>
+        Agregar al carrito
+      </button>
     </div>
   );
 };
