@@ -1,100 +1,106 @@
-:root {
-  font-family: Arial, Helvetica, sans-serif;
-  color: #1f2937;
-  background: #f4f6f8;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-}
-
-* {
-  box-sizing: border-box;
-}
-
 body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: #f8f9fa;
   margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  color: #333;
 }
 
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-.app-shell {
-  width: min(920px, calc(100% - 32px));
+.app-container {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 48px 0;
+  padding: 20px;
 }
 
 .app-header {
-  margin-bottom: 28px;
+  text-align: center;
+  margin-bottom: 40px;
 }
 
-.eyebrow {
-  margin: 0 0 8px;
-  color: #009d81;
-  font-weight: 700;
+.app-header h1 {
+  color: #2c3e50;
+  margin-bottom: 10px;
 }
 
-h1,
-h2,
-p {
-  margin-top: 0;
-}
-
-h1 {
-  margin-bottom: 12px;
-  color: #00245a;
-}
-
-.catalog-card {
-  padding: 24px;
-  background: #ffffff;
-  border-radius: 14px;
-  box-shadow: 0 8px 28px rgba(0, 36, 90, 0.08);
-}
-
-.catalog-card h2 {
-  color: #00245a;
-}
-
-.product-list {
+.main-content {
   display: grid;
-  gap: 12px;
-  margin: 16px 0 0;
-  padding: 0;
-  list-style: none;
+  grid-template-columns: 2fr 1fr; /* 2 tercios para catálogo, 1 tercio para carrito */
+  gap: 30px;
+  align-items: start;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
 }
 
 .product-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  padding: 20px;
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 14px 16px;
-  background: #f8fafc;
-  border-left: 4px solid #009d81;
+  flex-direction: column;
+  transition: transform 0.2s;
 }
 
-.product-card span {
-  flex: 0 0 auto;
-  color: #00245a;
-  font-weight: 700;
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
 }
 
-.error-message {
-  color: #a61b1b;
+.image-container {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  background-color: #fff;
 }
 
-@media (max-width: 600px) {
-  .app-shell {
-    width: min(100% - 24px, 920px);
-    padding: 28px 0;
-  }
+.image-container img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
 
-  .product-card {
-    flex-direction: column;
+.product-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.product-info h3 {
+  font-size: 1rem;
+  margin: 0 0 10px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: #1a1a1a;
+  flex-grow: 1;
+}
+
+.product-info .price {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #2ecc71;
+  margin: 0 0 15px 0;
+}
+
+.cart-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  padding: 20px;
+  position: sticky;
+  top: 20px;
+}
+
+/* Diseño automático para tu teléfono */
+@media (max-width: 768px) {
+  .main-content {
+    grid-template-columns: 1fr;
   }
 }
