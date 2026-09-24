@@ -5,16 +5,21 @@ import { ProductService } from '../services/productService';
 import { ProductCard } from '../components/ProductCard';
 import { CategoryFilter } from '../components/CategoryFilter';
 
+// 1. Interfaz de props que acepta el evento opcional onSelectProduct
+interface CatalogPageProps {
+  onSelectProduct?: (id: number) => void;
+}
+
 const productService = new ProductService();
 
-export const CatalogPage: React.FC = () => {
+// 2. Desestructuramos la prop en el componente
+export const CatalogPage: React.FC<CatalogPageProps> = ({ onSelectProduct }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
-  // Carga inicial: obtiene las categorías y el catálogo general[cite: 3]
   useEffect(() => {
     let isMounted = true;
 
@@ -48,17 +53,16 @@ export const CatalogPage: React.FC = () => {
     };
   }, []);
 
-  // Manejador al seleccionar una categoría o "Ver todos"[cite: 3]
   const handleSelectCategory = async (category: string) => {
     setSelectedCategory(category);
-    setProducts([]); // Regla de negocio: limpiar arreglo local antes de la petición[cite: 3]
-    setLoading(true); // Consistencia de carga: activa el spinner/cargador[cite: 3]
+    setProducts([]);
+    setLoading(true);
     setError(false);
 
     try {
       const data = category
-        ? await productService.getProductsByCategory(category) // Petición por categoría[cite: 3]
-        : await productService.getProducts(); // "Ver todos" restablece el catálogo[cite: 3]
+        ? await productService.getProductsByCategory(category)
+        : await productService.getProducts();
       setProducts(data);
     } catch {
       setError(true);
@@ -86,14 +90,12 @@ export const CatalogPage: React.FC = () => {
     <div style={styles.container}>
       <h2>Catálogo de Productos</h2>
 
-      {/* Componente de filtrado por categorías[cite: 3] */}
       <CategoryFilter
         categories={categories}
         selectedCategory={selectedCategory}
         onSelectCategory={handleSelectCategory}
       />
 
-      {/* Estado de carga[cite: 3] */}
       {loading && (
         <div style={styles.centerContainer}>
           <div className="spinner"></div>
@@ -101,7 +103,6 @@ export const CatalogPage: React.FC = () => {
         </div>
       )}
 
-      {/* Estado de error */}
       {!loading && error && (
         <div style={styles.centerContainer}>
           <p>Hubo un problema al obtener los datos.</p>
@@ -111,11 +112,15 @@ export const CatalogPage: React.FC = () => {
         </div>
       )}
 
-      {/* Renderizado de catálogo filtrado */}
       {!loading && !error && (
         <div style={styles.grid}>
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              // 3. Al hacer clic en la tarjeta, llamamos a onSelectProduct con el id
+              onClick={() => onSelectProduct?.(product.id)}
+            />
           ))}
         </div>
       )}

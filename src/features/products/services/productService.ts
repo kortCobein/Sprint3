@@ -10,20 +10,22 @@ export class ProductService {
     this.httpClient = new FetchHttpClient();
   }
 
-  // GET /products - Catálogo completo
   async getProducts(): Promise<Product[]> {
     return await this.httpClient.get<Product[]>(`${this.baseUrl}/products`);
   }
 
-  // GET /products/categories - Obtener lista de categorías disponibles
   async getCategories(): Promise<string[]> {
     return await this.httpClient.get<string[]>(`${this.baseUrl}/products/categories`);
   }
 
-  // GET /products/category/{category} - Obtener productos por categoría[cite: 3]
   async getProductsByCategory(category: string): Promise<Product[]> {
     return await this.httpClient.get<Product[]>(
       `${this.baseUrl}/products/category/${encodeURIComponent(category)}`
     );
+  }
+
+  // GET /products/{id} - Detalle de un producto individual
+  async getProductById(id: number | string): Promise<Product> {
+    return await this.httpClient.get<Product>(`${this.baseUrl}/products/${id}`);
   }
 }
