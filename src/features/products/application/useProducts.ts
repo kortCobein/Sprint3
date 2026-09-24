@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { IProductService } from '../domain/IProductService';
 import type { Product } from '../domain/Product';
+import type { ProductInput } from '../domain/ProductInput';
 
 interface ProductsState {
   products: Product[];
@@ -14,8 +15,10 @@ const initialState: ProductsState = {
   error: null,
 };
 
-export function useProducts(productService: IProductService): ProductsState {
+export function useProducts(productService: IProductService) {
   const [state, setState] = useState<ProductsState>(initialState);
+  const [saving, setSaving] = useState(false);
+  const [mutationError, setMutationError] = useState<string | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -41,5 +44,32 @@ export function useProducts(productService: IProductService): ProductsState {
     return () => controller.abort();
   }, [productService]);
 
-  return state;
+  async function createProduct(input: ProductInput) {
+    setSaving(true);
+    setMutationError(null);
+
+    try {
+      const created = await productService.create(input);
+      const normalized: Product = { ...input, ...created };
+      setState((current) => ({
+        ...current,
+        products: [normalized, ...current.products],
+      }));
+      return true;
+    } catch (error) {
+      setMutationError(
+        error instanceof Error ? error.message : 'No se pudo crear el producto',
+      );
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return {
+    ...state,
+    saving,
+    mutationError,
+    createProduct,
+  };
 }

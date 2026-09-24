@@ -4,6 +4,7 @@ import { useAuth } from '../features/auth/application/useAuth';
 import { LoginForm } from '../features/auth/ui/LoginForm';
 import { RolePanel } from '../features/auth/ui/RolePanel';
 import { useProducts } from '../features/products/application/useProducts';
+import { ProductCreateForm } from '../features/products/ui/ProductCreateForm';
 import { ProductList } from '../features/products/ui/ProductList';
 import { createAuthServices } from './createAuthServices';
 import { createProductService } from './createProductService';
@@ -15,7 +16,15 @@ interface AuthenticatedAppProps {
 
 function AuthenticatedApp({ session, onLogout }: AuthenticatedAppProps) {
   const productService = useMemo(() => createProductService(), []);
-  const { products, loading, error } = useProducts(productService);
+  const {
+    products,
+    loading,
+    error,
+    saving,
+    mutationError,
+    createProduct,
+  } = useProducts(productService);
+  const canManageInventory = session.user.role === 'Administrador';
 
   return (
     <main className="app-shell">
@@ -23,11 +32,19 @@ function AuthenticatedApp({ session, onLogout }: AuthenticatedAppProps) {
         <p className="eyebrow">Sprint 3 · React + TypeScript</p>
         <h1>Base de la aplicación</h1>
         <p>
-          Sesión protegida en React con autenticación, rol y cierre de sesión.
+          Sesión protegida en React con autenticación, rol y gestión de productos.
         </p>
       </header>
 
       <RolePanel user={session.user} onLogout={onLogout} />
+
+      {canManageInventory && (
+        <section className="catalog-card" aria-labelledby="create-title">
+          <h2 id="create-title">Agregar producto</h2>
+          <ProductCreateForm disabled={saving} onCreate={createProduct} />
+          {mutationError && <p className="error-message">{mutationError}</p>}
+        </section>
+      )}
 
       <section className="catalog-card" aria-labelledby="catalog-title">
         <h2 id="catalog-title">Catálogo base</h2>

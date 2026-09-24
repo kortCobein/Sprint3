@@ -57,6 +57,10 @@ h1 {
   box-shadow: 0 8px 28px rgba(0, 36, 90, 0.08);
 }
 
+.catalog-card + .catalog-card {
+  margin-top: 20px;
+}
+
 .catalog-card h2 {
   color: #00245a;
 }
@@ -88,6 +92,44 @@ h1 {
   color: #a61b1b;
 }
 
+.inventory-form {
+  display: grid;
+  gap: 16px;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.inventory-form label {
+  display: grid;
+  gap: 7px;
+  color: #00245a;
+  font-weight: 700;
+}
+
+.inventory-form input,
+.inventory-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1f2937;
+}
+
+.inventory-form input:focus,
+.inventory-form textarea:focus {
+  outline: 2px solid rgba(0, 157, 129, 0.2);
+  border-color: #009d81;
+}
+
+.inventory-form .primary-button {
+  justify-self: start;
+}
+
 @media (max-width: 600px) {
   .app-shell {
     width: min(100% - 24px, 920px);
@@ -96,6 +138,10 @@ h1 {
 
   .product-card {
     flex-direction: column;
+  }
+
+  .inventory-grid {
+    grid-template-columns: 1fr;
   }
 }
 
