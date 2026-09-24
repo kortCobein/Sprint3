@@ -59,6 +59,7 @@ interface AuthenticatedAppProps {
 function AuthenticatedApp({ session, onLogout }: AuthenticatedAppProps) {
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const isAdmin = session.user.role === 'Administrador';
+  const canAudit = isAdmin || session.user.role === 'Auditor';
   const isClient = session.user.role === 'Cliente';
 
   useEffect(() => {
@@ -77,7 +78,7 @@ function AuthenticatedApp({ session, onLogout }: AuthenticatedAppProps) {
       <RolePanel user={session.user} onLogout={onLogout} />
 
       {isAdmin && <InventoryPanel />}
-      {isAdmin && <UsersPage />}
+      {canAudit && <UsersPage />}
 
       <section className="catalog-card" aria-labelledby="catalog-title">
         <h2 id="catalog-title">
