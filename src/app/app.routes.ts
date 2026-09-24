@@ -3,22 +3,26 @@ import { Login } from './login/login';
 import { Administrador } from './administrador/administrador';
 import { Auditor } from './auditor/auditor';
 import { Cliente } from './cliente/cliente';
+import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
   {
     path: '',
-    component: Login
+    component: Login,
   },
   {
     path: 'administrador',
-    component: Administrador
+    component: Administrador,
+    canActivate: [authGuard],
   },
   {
     path: 'auditor',
-    component: Auditor
+    component: Auditor,
+    canActivate: [authGuard],
   },
   {
     path: 'cliente',
-    component: Cliente
-  }
+    component: Cliente,
+    canActivate: [authGuard],
+  },
 ];

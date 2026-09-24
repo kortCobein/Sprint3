@@ -1,33 +1,66 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Session {
+  private platformId = inject(PLATFORM_ID);
+
+  private getStorage(): Storage | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage;
+    }
+
+    return null;
+  }
 
   guardarSesion(token: string, idUsuario: number, rol: string) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('idUsuario', idUsuario.toString());
-    localStorage.setItem('rol', rol);
+    const storage = this.getStorage();
+
+    if (!storage) {
+      return;
+    }
+
+    storage.setItem('token', token);
+    storage.setItem('idUsuario', idUsuario.toString());
+    storage.setItem('rol', rol);
   }
 
   obtenerToken(): string | null {
-    return localStorage.getItem('token');
+    const storage = this.getStorage();
+
+    return storage ? storage.getItem('token') : null;
   }
 
   obtenerIdUsuario(): number | null {
-    const id = localStorage.getItem('idUsuario');
+    const storage = this.getStorage();
+
+    if (!storage) {
+      return null;
+    }
+
+    const id = storage.getItem('idUsuario');
 
     return id ? Number(id) : null;
   }
 
   obtenerRol(): string | null {
-    return localStorage.getItem('rol');
+    const storage = this.getStorage();
+
+    return storage ? storage.getItem('rol') : null;
   }
 
   cerrarSesion() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('idUsuario');
-    localStorage.removeItem('rol');
+    const storage = this.getStorage();
+
+    if (!storage) {
+      return;
+    }
+
+    storage.removeItem('token');
+    storage.removeItem('idUsuario');
+    storage.removeItem('rol');
+    storage.removeItem('carrito');
   }
 }
