@@ -247,3 +247,12 @@ h1 {
     flex-direction: column;
   }
 }
+
+.product-info { display: grid; flex: 1 1 auto; gap: 4px; }
+.product-info small { color: #64748b; }
+.edit-form { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+.edit-form input, .edit-form textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; color: #1f2937; }
+.edit-form textarea, .edit-form .product-actions { grid-column: 1 / -1; }
+.product-actions { display: flex; gap: 8px; align-items: center; }
+.product-actions button { border: 0; border-radius: 8px; padding: 9px 13px; background: #e8eef7; color: #00245a; font-weight: 700; cursor: pointer; }
+@media (max-width: 600px) { .edit-form { grid-template-columns: 1fr; } .product-actions { align-items: stretch; flex-direction: column; } }

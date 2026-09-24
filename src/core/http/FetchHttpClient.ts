@@ -1,7 +1,10 @@
 import type { IHttpClient } from './IHttpClient';
 import type { IPostHttpClient } from './IPostHttpClient';
+import type { IPutHttpClient } from './IPutHttpClient';
 
-export class FetchHttpClient implements IHttpClient, IPostHttpClient {
+export class FetchHttpClient
+  implements IHttpClient, IPostHttpClient, IPutHttpClient
+{
   async get<T>(url: string, signal?: AbortSignal): Promise<T> {
     const response = await fetch(url, { signal });
 
@@ -19,11 +22,26 @@ export class FetchHttpClient implements IHttpClient, IPostHttpClient {
     body: TBody,
     signal?: AbortSignal,
   ): Promise<TResponse> {
+    return this.send<TResponse, TBody>('POST', url, body, signal);
+  }
+
+  async put<TResponse, TBody>(
+    url: string,
+    body: TBody,
+    signal?: AbortSignal,
+  ): Promise<TResponse> {
+    return this.send<TResponse, TBody>('PUT', url, body, signal);
+  }
+
+  private async send<TResponse, TBody>(
+    method: 'POST' | 'PUT',
+    url: string,
+    body: TBody,
+    signal?: AbortSignal,
+  ): Promise<TResponse> {
     const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      method,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
       signal,
     });
