@@ -148,15 +148,19 @@ h1 {
   border-color: #009d81;
 }
 
-.primary-button {
-  margin-top: 10px;
+.primary-button,
+.secondary-button {
   border: 0;
   border-radius: 8px;
   padding: 11px 16px;
-  background: #009d81;
-  color: #ffffff;
   cursor: pointer;
   font-weight: 700;
+}
+
+.primary-button {
+  margin-top: 10px;
+  background: #009d81;
+  color: #ffffff;
 }
 
 .primary-button:disabled {
@@ -164,7 +168,17 @@ h1 {
   opacity: 0.65;
 }
 
+.secondary-button {
+  flex: 0 0 auto;
+  background: #00245a;
+  color: #ffffff;
+}
+
 .session-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
   margin-bottom: 20px;
   padding: 20px 24px;
 }
@@ -180,5 +194,10 @@ h1 {
 @media (max-width: 600px) {
   .login-card {
     padding: 24px;
+  }
+
+  .session-card {
+    align-items: stretch;
+    flex-direction: column;
   }
 }

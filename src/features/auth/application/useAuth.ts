@@ -37,8 +37,14 @@ export function useAuth(
     }
   }
 
+  function logout(): void {
+    sessionService.clear();
+    setState({ session: null, loading: false, error: null });
+  }
+
   return {
     ...state,
     login,
+    logout,
   };
 }
