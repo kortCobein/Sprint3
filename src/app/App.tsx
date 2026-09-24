@@ -1,54 +1,56 @@
-import { useEffect, useState } from 'react';
-import type { Product } from '../core/models/Product';
-import { AddToCartActions } from '../components/AddToCartActions';
-import { CartView } from '../components/CartView';
-import '../index.css';
+import { useMemo } from 'react';
+import type { SessionData } from '../features/auth/domain/Auth';
+import { useAuth } from '../features/auth/application/useAuth';
+import { LoginForm } from '../features/auth/ui/LoginForm';
+import { RolePanel } from '../features/auth/ui/RolePanel';
+import { useProducts } from '../features/products/application/useProducts';
+import { ProductCreateForm } from '../features/products/ui/ProductCreateForm';
+import { ProductList } from '../features/products/ui/ProductList';
+import { createAuthServices } from './createAuthServices';
+import { createProductService } from './createProductService';
 
-export default function App() {
-  const [products, setProducts] = useState<Product[]>([]);
+interface AuthenticatedAppProps { session: SessionData; onLogout(): void; }
 
-  // Simulamos el consumo de la FakeStoreAPI para traer las imágenes y datos reales
-  useEffect(() => {
-    fetch('https://fakestoreapi.com/products?limit=25')
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
-  }, []);
+function AuthenticatedApp({ session, onLogout }: AuthenticatedAppProps) {
+  const productService = useMemo(() => createProductService(), []);
+  const { products, loading, error, saving, mutationError, createProduct, updateProduct, deleteProduct } = useProducts(productService);
+  const canManageInventory = session.user.role === 'Administrador';
 
   return (
-    <div className="app-container">
+    <main className="app-shell">
       <header className="app-header">
-        <h1>NovaStore</h1>
-        <p>Tu tienda en línea con la mejor tecnología y estilo.</p>
+        <p className="eyebrow">Sprint 3 · React + TypeScript</p>
+        <h1>Base de la aplicación</h1>
+        <p>Sesión protegida en React con autenticación, rol y gestión de productos.</p>
       </header>
-      
-
-      <main className="main-content">
-        {/* Lado izquierdo: Catálogo con imágenes y botones (US09) */}
-        <section className="catalog-section">
-          <h2>Catálogo Base</h2>
-          <div className="product-grid">
-            {products.map((product) => (
-              <div key={product.id} className="product-card">
-                <div className="image-container">
-                  <img src={product.image} alt={product.title} />
-                </div>
-                <div className="product-info">
-                  <h3 title={product.title}>{product.title}</h3>
-                  <p className="price">${product.price.toFixed(2)}</p>
-                  
-                  {/* Aquí inyectamos tu Historia de Usuario 9 */}
-                  <AddToCartActions product={product} userRole="Cliente" />
-                </div>
-              </div>
-            ))}
-          </div>
+      <RolePanel user={session.user} onLogout={onLogout} />
+      {canManageInventory && (
+        <section className="catalog-card" aria-labelledby="create-title">
+          <h2 id="create-title">Agregar producto</h2>
+          <ProductCreateForm disabled={saving} onCreate={createProduct} />
+          {mutationError && <p className="error-message">{mutationError}</p>}
         </section>
-
-        {/* Lado derecho: Gestión del carrito (US10) */}
-        <aside className="cart-section">
-          <CartView />
-        </aside>
-      </main>
-    </div>
+      )}
+      <section className="catalog-card" aria-labelledby="catalog-title">
+        <h2 id="catalog-title">Catálogo base</h2>
+        {loading && <p>Cargando productos...</p>}
+        {error && <p className="error-message">Error: {error}</p>}
+        {!loading && !error && (
+          <ProductList
+            products={products}
+            disabled={saving}
+            onUpdate={canManageInventory ? updateProduct : undefined}
+            onDelete={canManageInventory ? deleteProduct : undefined}
+          />
+        )}
+      </section>
+    </main>
   );
+}
+
+export default function App() {
+  const authServices = useMemo(() => createAuthServices(), []);
+  const { session, loading, error, login, logout } = useAuth(authServices.authService, authServices.sessionService);
+  if (!session) return <LoginForm loading={loading} error={error} onLogin={login} />;
+  return <AuthenticatedApp session={session} onLogout={logout} />;
 }
