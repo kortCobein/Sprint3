@@ -1,19 +1,20 @@
-// src/features/products/pages/CatalogPage.tsx
 import React, { useEffect, useState } from 'react';
 import type { Product } from '../types/product';
 import { ProductService } from '../services/productService';
 import { ProductCard } from '../components/ProductCard';
 import { CategoryFilter } from '../components/CategoryFilter';
 
-// 1. Interfaz de props que acepta el evento opcional onSelectProduct
 interface CatalogPageProps {
   onSelectProduct?: (id: number) => void;
+  userRole: string;
 }
 
 const productService = new ProductService();
 
-// 2. Desestructuramos la prop en el componente
-export const CatalogPage: React.FC<CatalogPageProps> = ({ onSelectProduct }) => {
+export const CatalogPage: React.FC<CatalogPageProps> = ({
+  onSelectProduct,
+  userRole,
+}) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -36,18 +37,13 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onSelectProduct }) => 
           setError(false);
         }
       } catch {
-        if (isMounted) {
-          setError(true);
-        }
+        if (isMounted) setError(true);
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        if (isMounted) setLoading(false);
       }
     };
 
-    initData();
-
+    void initData();
     return () => {
       isMounted = false;
     };
@@ -74,6 +70,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onSelectProduct }) => 
   const handleRetry = async () => {
     setLoading(true);
     setError(false);
+
     try {
       const data = selectedCategory
         ? await productService.getProductsByCategory(selectedCategory)
@@ -88,8 +85,6 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onSelectProduct }) => 
 
   return (
     <div style={styles.container}>
-      <h2>Catálogo de Productos</h2>
-
       <CategoryFilter
         categories={categories}
         selectedCategory={selectedCategory}
@@ -98,7 +93,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onSelectProduct }) => 
 
       {loading && (
         <div style={styles.centerContainer}>
-          <div className="spinner"></div>
+          <div className="spinner" />
           <p>Cargando productos...</p>
         </div>
       )}
@@ -118,7 +113,7 @@ export const CatalogPage: React.FC<CatalogPageProps> = ({ onSelectProduct }) => 
             <ProductCard
               key={product.id}
               product={product}
-              // 3. Al hacer clic en la tarjeta, llamamos a onSelectProduct con el id
+              userRole={userRole}
               onClick={() => onSelectProduct?.(product.id)}
             />
           ))}
