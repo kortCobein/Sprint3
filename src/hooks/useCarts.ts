@@ -13,32 +13,55 @@ export function useCarts(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCarts = useCallback(async () => {
-    try {
-      const [cartsData, productsData] = await Promise.all([
+  const getCartsData = useCallback(
+    () =>
+      Promise.all([
         cartService.getAllCarts(),
         productService.getAll(),
-      ]);
+      ]),
+    [cartService, productService],
+  );
 
+  const retry = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const [cartsData, productsData] = await getCartsData();
       setCarts(cartsData);
       setProducts(productsData);
-      setError(null);
     } catch {
       setError('No se pudieron cargar los carritos.');
     } finally {
       setLoading(false);
     }
-  }, [cartService, productService]);
-
-  const retry = useCallback(() => {
-    setLoading(true);
-    setError(null);
-    void fetchCarts();
-  }, [fetchCarts]);
+  }, [getCartsData]);
 
   useEffect(() => {
-    void fetchCarts();
-  }, [fetchCarts]);
+    let active = true;
+
+    getCartsData()
+      .then(([cartsData, productsData]) => {
+        if (!active) return;
+        setCarts(cartsData);
+        setProducts(productsData);
+        setError(null);
+      })
+      .catch(() => {
+        if (active) {
+          setError('No se pudieron cargar los carritos.');
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [getCartsData]);
 
   return {
     carts,
