@@ -9,6 +9,7 @@ import { useProducts } from './features/products/application/useProducts';
 import { ProductCreateForm } from './features/products/ui/ProductCreateForm';
 import { ProductList } from './features/products/ui/ProductList';
 import { CartView } from './components/CartView';
+import { UsersPage } from './components/UsersPage';
 import { createAuthServices } from './app/createAuthServices';
 import { createProductService } from './app/createProductService';
 
@@ -70,12 +71,13 @@ function AuthenticatedApp({ session, onLogout }: AuthenticatedAppProps) {
       <header className="app-header">
         <p className="eyebrow">Sprint 3 · React + TypeScript</p>
         <h1>Tienda</h1>
-        <p>Catálogo, sesión, inventario y carrito integrados.</p>
+        <p>Catálogo, sesión, inventario, usuarios y carrito integrados.</p>
       </header>
 
       <RolePanel user={session.user} onLogout={onLogout} />
 
       {isAdmin && <InventoryPanel />}
+      {isAdmin && <UsersPage />}
 
       <section className="catalog-card" aria-labelledby="catalog-title">
         <h2 id="catalog-title">
